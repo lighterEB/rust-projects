@@ -1,0 +1,5 @@
+# 忽略编译生成的 target 目录
+/target
+# 忽略其他临时文件
+**/target/
+*.rs.bk
