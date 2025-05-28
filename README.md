@@ -1,2 +1,6 @@
 # rust-projects
-Rust practice repository containing multiple independent projects to explore syntax, concepts, and problem-solving.
+## 简介
+这是一个用于学习 Rust 的练习仓库，包含多个独立的 Rust 项目。每个项目专注特定的 Rust 概念、语法或小型问题的解决，旨在帮助我掌握 Rust 的基础和进阶技能。
+
+## 项目结构
+每个项目都是独立的，切换到项目目录运行即可。
