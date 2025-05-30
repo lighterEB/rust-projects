@@ -66,11 +66,6 @@ struct Task {
     completed: bool,
 }
 
-// 任务管理器结构体
-struct TodoList {
-    tasks: Vec<Task>,
-}
-
 impl Task {
     fn new(id: usize, description: String, priority: Priority) -> Self {
         Task {
@@ -82,31 +77,45 @@ impl Task {
     }
 }
 
+// 任务管理器结构体
+struct TodoList {
+    tasks: Vec<Task>,
+    next_id: usize,
+}
+
 impl TodoList {
     // 创建空的代办事项列表
-    fn new() -> TodoList {
-        TodoList { tasks: Vec::new() }
+    fn new() -> Self {
+        TodoList {
+            tasks: Vec::new(),
+            next_id: 1,
+        }
     }
 
     // 添加任务
-    fn add_task(&mut self, description: String, priority: &str) {
-        let priority = match priority.to_lowercase().as_str() {
-            "high" => Priority::High,
-            "medium" => Priority::Medium,
-            "low" => Priority::Low,
-            _ => {
-                println!("无效的优先级，将使用默认值 'Low'");
-                Priority::Low
-            }
-        };
-        let task = Task {
-            description,
-            priority,
-            completed: false,
-        };
-
+    fn add_task(&mut self, description: String, priority_str: &str) -> Result<(), TodoError> {
+        // let priority = match priority.to_lowercase().as_str() {
+        //     "high" => Priority::High,
+        //     "medium" => Priority::Medium,
+        //     "low" => Priority::Low,
+        //     _ => {
+        //         println!("无效的优先级，将使用默认值 'Low'");
+        //         Priority::Low
+        //     }
+        // };
+        let priority = Priority::from_str(priority_str)?;
+        let task = Task::new(self.next_id, description, priority);
         self.tasks.push(task);
-        println!("任务已添加！");
+        self.next_id += 1;
+        // let task = Task {
+        //     description,
+        //     priority,
+        //     completed: false,
+        // };
+
+        // self.tasks.push(task);
+        println!("任务已添加！👌");
+        Ok(())
     }
 
     // 列出所有任务
