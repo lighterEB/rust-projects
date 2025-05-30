@@ -60,6 +60,7 @@ impl Priority {
 // 定义任务结构体
 #[derive(Debug)]
 struct Task {
+    id: usize,
     description: String,
     priority: Priority,
     completed: bool,
@@ -68,6 +69,17 @@ struct Task {
 // 任务管理器结构体
 struct TodoList {
     tasks: Vec<Task>,
+}
+
+impl Task {
+    fn new(id: usize, description: String, priority: Priority) -> Self {
+        Task {
+            id,
+            description,
+            priority,
+            completed: false,
+        }
+    }
 }
 
 impl TodoList {
