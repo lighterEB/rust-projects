@@ -1,11 +1,60 @@
+use std::fmt;
+use std::fmt::write;
 use std::io;
 
-// 定义优先级枚举
+// 自定义错误类型
 #[derive(Debug)]
+enum TodoError {
+    InvalidIndex,
+    NoTask,
+    NoCompletedTask,
+    InvalidPriority(String),
+}
+
+impl fmt::Display for TodoError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            TodoError::InvalidIndex => write!(f, "任务编号无效！"),
+            TodoError::NoTask => write!(f, "没有任务"),
+            TodoError::NoCompletedTask => write!(f, "没有已完成的任务可以删除！"),
+            TodoError::InvalidPriority(p) => write!(f, "无效的优先级{}，请使用 high/medium/low", p),
+        }
+    }
+}
+
+// 定义优先级枚举
+#[derive(Debug, Clone)]
 enum Priority {
     High,
     Medium,
     Low,
+}
+
+impl Priority {
+    fn from_str(s: &str) -> Result<Priority, TodoError> {
+        match s.to_lowercase().as_str() {
+            "high" | "高" | "h" | "1" => Ok(Priority::High),
+            "medium" | "中" | "m" | "2" => Ok(Priority::Medium),
+            "low" | "低" | "l" | "3" => Ok(Priority::Low),
+            _ => Err(TodoError::InvalidPriority(s.to_string())),
+        }
+    }
+
+    fn to_string(&self) -> &str {
+        match self {
+            Priority::High => "高",
+            Priority::Medium => "中",
+            Priority::Low => "低",
+        }
+    }
+
+    fn to_emoji(&self) -> &str {
+        match self {
+            Priority::High => "🔴",
+            Priority::Medium => "🟡",
+            Priority::Low => "🟢",
+        }
+    }
 }
 
 // 定义任务结构体
