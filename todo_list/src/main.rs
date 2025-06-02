@@ -58,7 +58,7 @@ impl Priority {
 }
 
 // 定义任务结构体
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 struct Task {
     id: usize,
     description: String,
@@ -119,18 +119,69 @@ impl TodoList {
     }
 
     // 列出所有任务
-    fn list_tasks(&self) {
+    fn list_tasks(&self) -> Result<(), TodoError> {
         if self.tasks.is_empty() {
-            println!("没有任务！");
-            return;
+            return Err(TodoError::NoTask);
         }
+        println!("\n📋当前任务列表：");
+        println!("{:-<60}", "");
+
         for (index, task) in self.tasks.iter().enumerate() {
-            let status = if task.completed { "✅" } else { "🈚️" };
+            let status = if task.completed { "✅" } else { "⏳" };
             println!(
-                "编号：{} | 描述：{} | 优先级：{:?} | 状态：{}",
-                index, task.description, task.priority, status
+                "{} | {} {} {} | {}",
+                index + 1,
+                status,
+                task.priority.to_emoji(),
+                task.priority.to_string(),
+                task.description
             );
         }
+        // for (index, task) in self.tasks.iter().enumerate() {
+        //     let status = if task.completed { "✅" } else { "🈚️" };
+        //     println!(
+        //         "编号：{} | 描述：{} | 优先级：{:?} | 状态：{}",
+        //         index, task.description, task.priority, status
+        //     );
+        // }
+
+        println!("{:-<60}", "");
+        Ok(())
+    }
+
+    // 按照优先级列出任务
+    fn list_task_by_priority(&self) -> Result<(), TodoError> {
+        if self.tasks.is_empty() {
+            return Err(TodoError::NoTask);
+        }
+
+        let mut sorted_tasks = self.tasks.clone();
+        sorted_tasks.sort_by(|a, b| {
+            use Priority::*;
+            let order = |p: &Priority| match p {
+                High => 0,
+                Medium => 1,
+                Low => 2,
+            };
+            order(&a.priority).cmp(&order(&b.priority))
+        });
+
+        println!("\n📋 按优先级排序的任务列表：");
+        println!("{:-<60}", "");
+
+        for task in sorted_tasks {
+            let status = if task.completed { "✅" } else { "⏳" };
+
+            println!(
+                "{} {} {} | {}",
+                status,
+                task.priority.to_emoji(),
+                task.priority.to_string(),
+                task.description
+            );
+        }
+        println!("{:-<60}", "");
+        Ok(())
     }
 
     // 标记任务为已完成
