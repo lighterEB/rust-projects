@@ -214,41 +214,51 @@ impl TodoList {
     }
 
     // 删除任务
-    fn delete_task(&mut self, index: usize) -> Result<(), &'static str> {
-        if index >= self.tasks.len() {
-            return Err("任务编号无效！");
+    fn delete_task(&mut self, index: usize) -> Result<(), TodoError> {
+        if index >= self.tasks.len() || index == 0 {
+            return Err(TodoError::InvalidIndex);
         }
-        self.tasks.remove(index);
+        // self.tasks.remove(index);
+        let task = self.tasks.remove(index);
+        println!("🗑️ 已删除任务: '{}'", task.description);
         Ok(())
     }
 
     // 批量删除已完成任务
-    fn delete_complete_task(&mut self) -> Result<(), &'static str> {
+    fn delete_complete_task(&mut self) -> Result<(), TodoError> {
         if self.tasks.is_empty() {
-            return Err("没有任务可删除");
+            return Err(TodoError::NoTask);
         }
+
+        let task_count = self.tasks.len();
+        self.tasks.retain(|task| !task.completed);
+        let delete_task = task_count - self.tasks.len();
+        if delete_task == 0 {
+            return Err(TodoError::NoCompletedTask);
+        }
+        println!("🗑️ 已删除 {} 个已完成的任务", delete_task);
         // 收集已完成任务的索引，从小到大
-        let mut indices: Vec<usize> = self
-            .tasks
-            .iter()
-            .enumerate()
-            .filter(|(_, task)| task.completed)
-            .map(|(index, _)| index)
-            .collect();
-        // 按降序排序确保从后向前删除
-        indices.sort_by(|a, b| b.cmp(a));
-        // 记录删除任务的数量
-        let count = indices.len();
-        if count == 0 {
-            return Err("没有已完成的任务可删除！");
-        }
-        for index in indices {
-            println!("删除已完成的任务编号：{}", index);
-            match self.delete_task(index) {
-                Ok(_) => continue,
-                Err(e) => return Err(e),
-            }
-        }
+        // let mut indices: Vec<usize> = self
+        //     .tasks
+        //     .iter()
+        //     .enumerate()
+        //     .filter(|(_, task)| task.completed)
+        //     .map(|(index, _)| index)
+        //     .collect();
+        // // 按降序排序确保从后向前删除
+        // indices.sort_by(|a, b| b.cmp(a));
+        // // 记录删除任务的数量
+        // let count = indices.len();
+        // if count == 0 {
+        //     return Err("没有已完成的任务可删除！");
+        // }
+        // for index in indices {
+        //     println!("删除已完成的任务编号：{}", index);
+        //     match self.delete_task(index) {
+        //         Ok(_) => continue,
+        //         Err(e) => return Err(e),
+        //     }
+        // }
         Ok(())
     }
 }
