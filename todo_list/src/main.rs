@@ -1,6 +1,7 @@
 use std::fmt;
 use std::fmt::write;
-use std::io;
+use std::io::{self, Error};
+use std::mem::take;
 
 // 自定义错误类型
 #[derive(Debug)]
@@ -185,11 +186,30 @@ impl TodoList {
     }
 
     // 标记任务为已完成
-    fn complete_task(&mut self, index: usize) -> Result<(), &'static str> {
-        if index >= self.tasks.len() {
-            return Err("任务编号无效！");
+    // fn complete_task(&mut self, index: usize) -> Result<(), &'static str> {
+    //     if index >= self.tasks.len() {
+    //         return Err("任务编号无效！");
+    //     }
+    //     self.tasks[index].completed = true;
+    //     Ok(())
+    // }
+    fn complete_task(&mut self, index: usize) -> Result<(), TodoError> {
+        if index == 0 || index > self.tasks.len() {
+            return Err(TodoError::InvalidIndex);
         }
-        self.tasks[index].completed = true;
+
+        let task_index = index - 1;
+        if self.tasks[task_index].completed {
+            println!("⚠️ 任务已经完成！");
+            return Ok(());
+        }
+
+        self.tasks[task_index].completed = true;
+        println!(
+            "✅ 任务 '{}' 已标记为完成！",
+            self.tasks[task_index].description
+        );
+
         Ok(())
     }
 
