@@ -261,6 +261,39 @@ impl TodoList {
         // }
         Ok(())
     }
+
+    // 搜索任务
+    fn search_tasks(&self, keyword: &str) -> Result<(), TodoError> {
+        let matching_tasks: Vec<_> = self
+            .tasks
+            .iter()
+            .enumerate()
+            .filter(|(_, task)| {
+                task.description
+                    .to_lowercase()
+                    .contains(&keyword.to_lowercase())
+            })
+            .collect();
+        if matching_tasks.len() == 0 {
+            println!("🔍 没有找到包含 '{}' 的任务", keyword);
+            return Ok(());
+        }
+        println!("\n🔍 搜索结果 (关键词: '{}'):", keyword);
+        println!("{:-<60}", "");
+        for (index, task) in matching_tasks {
+            let status = if task.completed { "✅" } else { "⏳" };
+            println!(
+                "{} | {} {} {} | {}",
+                index + 1,
+                status,
+                task.priority.to_emoji(),
+                task.priority.to_string(),
+                task.description
+            );
+        }
+        println!("{:-<60}", "");
+        Ok(())
+    }
 }
 
 fn main() {
