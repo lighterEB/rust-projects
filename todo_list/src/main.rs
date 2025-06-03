@@ -327,6 +327,22 @@ fn get_input(prompt: &str) -> String {
     input.trim().to_string()
 }
 
+// 显示菜单
+fn show_menu() {
+    println!("\n🎯 Rust任务管理器");
+    println!("=================");
+    println!("1. 添加任务");
+    println!("2. 查看所有任务");
+    println!("3. 按优先级查看任务");
+    println!("4. 完成任务");
+    println!("5. 删除任务");
+    println!("6. 删除所有已完成任务");
+    println!("7. 搜索任务");
+    println!("8. 查看统计");
+    println!("0. 退出");
+    println!("=================");
+}
+
 fn main() {
     let mut todo = TodoList::new();
     todo.add_task(String::from("打飞机"), "High");
