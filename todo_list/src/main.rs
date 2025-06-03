@@ -319,6 +319,14 @@ impl TodoList {
     }
 }
 
+// 获取用户输入
+fn get_input(prompt: &str) -> String {
+    println!("{}", prompt);
+    let mut input = String::new();
+    io::stdin().read_line(&mut input).expect("读取输入失败");
+    input.trim().to_string()
+}
+
 fn main() {
     let mut todo = TodoList::new();
     todo.add_task(String::from("打飞机"), "High");
