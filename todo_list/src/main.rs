@@ -294,28 +294,34 @@ impl TodoList {
         println!("{:-<60}", "");
         Ok(())
     }
+
+    // 统计信息
+    fn show_stats(&self) {
+        // 任务总数
+        let total = self.tasks.len();
+        // 已完成的任务
+        let completed = self.tasks.iter().filter(|t| t.completed).count();
+        // 待办
+        let pending = total - completed;
+
+        // 任务优先级
+        let high_priority = self.tasks.iter().filter(|t| matches!(t.priority, Priority::High) && !t.completed).count();
+        let medium_priority = self.tasks.iter().filter(|t| matches!(t.priority, Priority::Medium) && !t.completed).count();
+        let low_priority = self.tasks.iter().filter(|t| matches!(t.priority, Priority::Low) && !t.completed).count();
+
+        println!("\n📊 任务统计:");
+        println!("总任务数: {}", total);
+        println!("已完成: {} ✅", completed);
+        println!("待完成: {} ⏳", pending);
+        println!("高优先级待办: {} 🔴", high_priority);
+        println!("中优先级待办: {} 🟡", medium_priority);
+        println!("低优先级待办: {} 🟢", low_priority);
+    }
 }
 
 fn main() {
     let mut todo = TodoList::new();
     todo.add_task(String::from("打飞机"), "High");
     todo.add_task(String::from("做作业"), "Medium");
-    // println!("任务列表: {:?}", todo.tasks);
-    todo.list_tasks();
-    match todo.complete_task(0) {
-        Ok(_) => println!("任务已标记为完成！"),
-        Err(e) => println!("错误：{}", e),
-    }
-
-    match todo.complete_task(1) {
-        Ok(_) => println!("任务已标记为完成！"),
-        Err(e) => println!("错误：{}", e),
-    }
-    todo.list_tasks();
-    match todo.delete_complete_task() {
-        Ok(_) => println!("所有完成任务已删除"),
-        Err(e) => println!("错误：{}", e),
-    }
-    println!("目前未完成任务清单：");
-    todo.list_tasks();
+    todo.show_stats();
 }
