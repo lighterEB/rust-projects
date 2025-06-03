@@ -1,7 +1,5 @@
 use std::fmt;
-use std::fmt::write;
-use std::io::{self, Error};
-use std::mem::take;
+use std::io::{self};
 
 // 自定义错误类型
 #[derive(Debug)]
@@ -127,11 +125,11 @@ impl TodoList {
         println!("\n📋当前任务列表：");
         println!("{:-<60}", "");
 
-        for (index, task) in self.tasks.iter().enumerate() {
+        for (_index, task) in self.tasks.iter().enumerate() {
             let status = if task.completed { "✅" } else { "⏳" };
             println!(
                 "{} | {} {} {} | {}",
-                index + 1,
+                task.id,
                 status,
                 task.priority.to_emoji(),
                 task.priority.to_string(),
@@ -174,7 +172,8 @@ impl TodoList {
             let status = if task.completed { "✅" } else { "⏳" };
 
             println!(
-                "{} {} {} | {}",
+                "{} | {} {} {} | {}",
+                task.id,
                 status,
                 task.priority.to_emoji(),
                 task.priority.to_string(),
@@ -280,11 +279,11 @@ impl TodoList {
         }
         println!("\n🔍 搜索结果 (关键词: '{}'):", keyword);
         println!("{:-<60}", "");
-        for (index, task) in matching_tasks {
+        for (_index,task) in matching_tasks {
             let status = if task.completed { "✅" } else { "⏳" };
             println!(
                 "{} | {} {} {} | {}",
-                index + 1,
+                task.id,
                 status,
                 task.priority.to_emoji(),
                 task.priority.to_string(),
@@ -344,8 +343,98 @@ fn show_menu() {
 }
 
 fn main() {
+    // let mut todo = TodoList::new();
+    // todo.add_task(String::from("打飞机"), "High");
+    // todo.add_task(String::from("做作业"), "Medium");
+    // todo.show_stats();
     let mut todo = TodoList::new();
-    todo.add_task(String::from("打飞机"), "High");
-    todo.add_task(String::from("做作业"), "Medium");
-    todo.show_stats();
+
+    // 添加一些示例数据
+    let _ = todo.add_task("研究人类的诞生".to_string(), "high");
+    let _ = todo.add_task("吃一份番茄蛋饭".to_string(), "medium");
+    let _ = todo.add_task("对着天空说520".to_string(), "low");
+
+    println!("🚀 欢迎使用Rust任务管理器！");
+
+    loop {
+        show_menu();
+        let choice = get_input("请选择操作(0-8):");
+
+        match choice.as_str() {
+            "1" => {
+                let description = get_input("请输入任务描述：");
+                if description.is_empty() {
+                    println!("🙅任务描述不能为空！");
+                    continue;
+                }
+
+                let priority = get_input("请输入优先级（high/medium/low 或 h/m/l 或 1/2/3）:");
+                match todo.add_task(description, &priority) {
+                    Ok(_) => {},
+                    Err(e) => println!("🙅‍♂️{}", e),
+                }
+            },
+            "2" => {
+                if let Err(e) = todo.list_tasks() {
+                    println!("🙅‍♂️{}", e);
+                }
+            },
+            "3" => {
+                if let Err(e) = todo.list_task_by_priority() {
+                    println!("🙅‍♂️{}", e);
+                }
+            },
+            "4" => {
+                if let Ok(_) = todo.list_tasks() {
+                    let input = get_input("请输入要完成的任务编号：");
+                    match input.parse::<usize>() {
+                        Ok(index) => {
+                            if let Err(e) = todo.complete_task(index) {
+                                println!("🙅‍♂️{}", e);
+                            }
+                        }
+                        Err(_) => println!("🙅‍♂️请输入有效数字！"),
+                    }
+                }
+            },
+            "5" => {
+                if let Ok(_) = todo.list_tasks() {
+                    let input = get_input("请输入要删除的任务编号：");
+                    match input.parse::<usize>() {
+                        Ok(index) => {
+                            if let Err(e) = todo.delete_task(index) {
+                                println!("🙅‍♂️{}", e);
+                            }
+                        }
+                        Err(_) => println!("🙅‍♂️请输入有效数字！"),
+                    }
+                }
+            },
+            "6" => {
+                if let Err(e) = todo.delete_complete_task() {
+                    println!("🙅‍♂️{}", e);
+                }
+            },
+            "7" => {
+                let keyword = get_input("请输入搜索关键字：");
+                if !keyword.is_empty() {
+                    let _ = todo.search_tasks(&keyword);
+                }
+            },
+            "8" => {
+                todo.show_stats();
+            },
+            "0" => {
+                println!("👋 再见！感谢使用任务管理器！");
+                break;
+            },
+            _ => {
+                println!("无效选择，请重新输入！");
+            }
+
+        }
+
+        // 按任意键继续
+        let _ = get_input("\n按回车键继续...");
+    }
 }
