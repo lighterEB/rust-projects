@@ -114,14 +114,24 @@ fn main() {
         });
     }
 
-    // append_dot 回调实现
-    // cal.on_append_dot(move || {
-    //     let current_text = cal.get_display_text();
-    //     if !current_text.as_str().contains(".") {
-    //         format!("{}.", current_text).into();
-    //     } else {
-    //         current_text;
-    //     }
-    // });
+    {
+        let cal_weak = cal.as_weak();
+        let state = state.clone();
+        // append_dot 回调实现
+        cal.on_append_dot(move || {
+            let mut state = state.borrow_mut();
+            let current_text = state.display_text.clone();
+            if let Some(cal) = cal_weak.upgrade() {
+                let new_text = if !state.display_text.contains(".") {
+                    format!("{}{}", state.display_text, ".")
+                } else {
+                    current_text
+                };
+                state.display_text = new_text.clone();
+                let _ = cal.set_display_text(new_text.into());
+            }
+        });
+    }
+
     cal.run().unwrap();
 }
