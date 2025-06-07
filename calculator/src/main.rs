@@ -1,6 +1,7 @@
 use slint::slint;
 use std::cell::RefCell;
 use std::rc::Rc;
+use std::thread::current;
 
 slint! {
     import { Button, VerticalBox, HorizontalBox } from "std-widgets.slint";
@@ -12,6 +13,7 @@ slint! {
 
         callback append_digit(string);
         callback append_dot();
+        callback clearly();
         // 定义属性存储显示文本
         in-out property <string> display_text: "0";
 
@@ -40,7 +42,7 @@ slint! {
             GridLayout {
                 spacing: 5px;
                 Row {
-                    Button { text: "AC"; clicked => {debug("Clear clicked");}}
+                    Button { text: "AC"; clicked => {debug("Clear clicked"); root.clearly()}}
                     Button { text: "+/-"; clicked => {debug("Sign/Unsign clicked");}}
                     Button { text: "%"; clicked => {debug("Percent clicked");}}
                     Button { text: "/"; clicked => {debug("Divide clicked");}}
@@ -129,6 +131,22 @@ fn main() {
                 };
                 state.display_text = new_text.clone();
                 let _ = cal.set_display_text(new_text.into());
+            }
+        });
+    }
+
+    // 清除回调实现
+    {
+        let cal_weak = cal.as_weak();
+        let state = state.clone();
+        cal.on_clearly(move || {
+            let mut state = state.borrow_mut();
+            if let Some(cal) = cal_weak.upgrade() {
+                state.display_text = "0".to_string();
+                state.current_value = 0.0;
+                state.pending_operation = None;
+                state.waiting_for_operand = false;
+                let _ = cal.set_display_text("0".into());
             }
         });
     }
