@@ -124,12 +124,16 @@ fn main() {
             let mut state = state.borrow_mut();
             let current_text = state.display_text.clone();
             if let Some(cal) = cal_weak.upgrade() {
-                let new_text = if !state.display_text.contains(".") {
-                    format!("{}{}", state.display_text, ".")
+                let new_text = if state.waiting_for_operand {
+                    state.waiting_for_operand = false;
+                    state.display_text = "0.".to_string();
+                    format!("{}", state.display_text)
+                } else if !state.display_text.contains(".") {
+                    state.display_text.push('.');
+                    format!("{}", state.display_text)
                 } else {
                     current_text
                 };
-                state.display_text = new_text.clone();
                 let _ = cal.set_display_text(new_text.into());
             }
         });
