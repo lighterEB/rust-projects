@@ -1,0 +1,10 @@
+[package]
+name = "my_recorder"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+slint = "1.11"
+
+[build-dependencies]
+slint_build = "1.11"
