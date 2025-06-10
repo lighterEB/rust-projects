@@ -10,6 +10,7 @@ export component MainWindow inherits Window {
             width: 30%;
             VerticalLayout {
                 GridBox {
+                    Rectangle {}
                     Button {
                         primary: true;
                         text: "添加";
@@ -19,24 +20,33 @@ export component MainWindow inherits Window {
                         text: "删除";
                     }
                 }
+                // 水平分割线
+                Rectangle {
+                    width: 5%; // 细线宽度
+                    height: 1px; // 填充父元素高度
+                    background: gray; // 分割线颜色
+                }
                 
                 VerticalBox {
-                    ListView {
+                    ScrollView {
+                        height: 95%;
                         for data in [
                             { text: "书签1", color: #fff},
-                            { text: "书签2", color: #fff}
-                        ]: ScrollView {
-                            width: parent.width;
-                            height: 20px;
-                            Text {
-                                x: 0;
-                                text: data.text;
-                                horizontal-alignment: left;
-                            }
+                            { text: "书签2", color: #fff},
+                            { text: "书签3", color: #fff},
+                        ]:Text {
+                            x: 0;
+                            text: data.text;
+                            horizontal-alignment: left;
+                            vertical-alignment: center;
                         }
                     }
                     Rectangle {
-
+                        height: 10px;
+                        width: 100%;
+                        Text {
+                            text: "h";
+                        }
                     }
                 }
             }
