@@ -7,4 +7,4 @@ edition = "2024"
 slint = "1.11"
 
 [build-dependencies]
-slint_build = "1.11"
+slint-build = "1.11"

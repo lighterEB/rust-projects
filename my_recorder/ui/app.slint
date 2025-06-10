@@ -1,12 +1,48 @@
-import { AboutSlint, VerticalBox } from "std-widgets.slint";
-
+import { VerticalBox, Button, GroupBox, AboutSlint, HorizontalBox, ListView, Slider, TabWidget, ScrollView, GridBox } from "std-widgets.slint";
 export component MainWindow inherits Window {
-    VerticalBox {
-        Text {
-            text: "Hello World!";
+    width: 600px;
+    height: 480px;
+    title: "书签管理器";
+
+    HorizontalBox {
+        spacing: 20px;
+        GroupBox {
+            width: 30%;
+            VerticalLayout {
+                GridBox {
+                    Button {
+                        primary: true;
+                        text: "添加";
+                    }
+                    Button {
+
+                        text: "删除";
+                    }
+                }
+                
+                VerticalBox {
+                    ListView {
+                        for data in [
+                            { text: "书签1", color: #fff},
+                            { text: "书签2", color: #fff}
+                        ]: ScrollView {
+                            width: parent.width;
+                            height: 20px;
+                            Text {
+                                x: 0;
+                                text: data.text;
+                                horizontal-alignment: left;
+                            }
+                        }
+                    }
+                    Rectangle {
+
+                    }
+                }
+            }
         }
-        AboutSlint {
-            preferred-height: 150px;
+
+        GroupBox {
         }
     }
 }
