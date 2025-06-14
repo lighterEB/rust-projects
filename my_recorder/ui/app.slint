@@ -1,8 +1,25 @@
 import { VerticalBox, Button, GroupBox, AboutSlint, HorizontalBox, ListView, Slider, TabWidget, ScrollView, GridBox, StandardListView, LineEdit } from "std-widgets.slint";
+import { WarningDialog } from "warning_dialog.slint";
 export component MainWindow inherits Window {
     width: 600px;
     height: 480px;
     title: "书签管理器";
+
+    in-out property <string> select-text: "";
+
+    show-warning := WarningDialog {
+        width: 300px; height: 150px;
+        x: (parent.width - self.width) / 2;
+        y: (parent.height - self.height) / 2;
+        dialog-result(confirmed) => {
+            if (confirmed) {
+                debug("用户确认删除");
+            } else {
+                debug("用户取消删除");
+            }
+        }
+    }
+
     popupAddWindow := PopupWindow {
         width: 400px;
         height: 280px;
@@ -62,6 +79,9 @@ export component MainWindow inherits Window {
                     }
                     Button {
                         text: "删除";
+                        clicked => {
+                            show-warning.show();
+                        }
                     }
                 }
                 // 水平分割线
@@ -80,9 +100,15 @@ export component MainWindow inherits Window {
                     {text: @tr("Lorem")}, {text: @tr("ipsum")},{text: @tr("dolor")},{text: @tr("sit")},{text: @tr("amet")},{text: @tr("consetetur")},
                     {text: @tr("Lorem")}, {text: @tr("ipsum")},{text: @tr("dolor")},{text: @tr("sit")},{text: @tr("amet")},{text: @tr("consetetur")},
                 ];
+                item-pointer-event(item, event, position) => {
+                    if event.button == PointerEventButton.left && event.kind == PointerEventKind.up {
+                        root.select-text = self.model[item].text;
+                        debug("Select item: " + root.select-text);
+                        }
+                    }
+                }
             }
         }
-    }
 
         GroupBox {
         }

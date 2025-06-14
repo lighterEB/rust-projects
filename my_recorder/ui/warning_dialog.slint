@@ -1,0 +1,37 @@
+import { StandardButton, TextEdit, HorizontalBox, GroupBox, TextEdit, Button } from "std-widgets.slint";
+export component WarningDialog inherits PopupWindow {
+    in-out property <bool> confirmed: false;
+    callback dialog-result(bool);
+
+    close-policy: no-auto-close;
+    GroupBox {
+        VerticalLayout {
+            spacing: 10px;
+            padding: 10px;
+            Text {
+                text: "警告！";
+                horizontal-alignment: center;
+                font-size: 16px;
+                font-weight: 700;
+            }
+            Text {
+                text: "您确定要删除该条信息吗？";
+                horizontal-alignment: center;
+            }
+            HorizontalBox {
+                Button {
+                    text: "确定";
+                    clicked => {
+                        root.confirmed = true;
+                    }
+                }
+                Button {
+                    text: "取消";
+                    clicked => {
+                        root.confirmed = false;
+                    }
+                }
+            }
+        }
+    }
+}
