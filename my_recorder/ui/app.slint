@@ -1,56 +1,88 @@
-import { VerticalBox, Button, GroupBox, AboutSlint, HorizontalBox, ListView, Slider, TabWidget, ScrollView, GridBox } from "std-widgets.slint";
+import { VerticalBox, Button, GroupBox, AboutSlint, HorizontalBox, ListView, Slider, TabWidget, ScrollView, GridBox, StandardListView, LineEdit } from "std-widgets.slint";
 export component MainWindow inherits Window {
     width: 600px;
     height: 480px;
     title: "书签管理器";
+    popupAddWindow := PopupWindow {
+        width: 400px;
+        height: 280px;
+        x: parent.width * 0.25;
+        y: parent.height * 0.25;
+        close-policy: no-auto-close;
+        GroupBox {
+            VerticalLayout {
+                HorizontalBox {
+                    Text {
+                        text: "标签：";
+                    }
+                    LineEdit {
+                        placeholder-text: "请输入网址描述";
+                    }
+                }
+                HorizontalBox {
+                    Text {
+                        text: "URL:";
+                    }
+                    LineEdit {
+                        placeholder-text: "请输入网址";
+                    }
+                }
+                HorizontalBox {
+                    Button {
+                        text: "确定";
+                        clicked => {
+                            popupAddWindow.close();
+                        }
+                    }
+                    Button {
+                        text: "取消";
+                        clicked => {
+                            popupAddWindow.close();
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     HorizontalBox {
         spacing: 20px;
         GroupBox {
             width: 30%;
             VerticalLayout {
+                spacing: 5px;
                 GridBox {
                     Rectangle {}
                     Button {
                         primary: true;
                         text: "添加";
+                        clicked => {
+                            popupAddWindow.show();
+                        }
                     }
                     Button {
-
                         text: "删除";
                     }
                 }
                 // 水平分割线
                 Rectangle {
-                    width: 5%; // 细线宽度
                     height: 1px; // 填充父元素高度
                     background: gray; // 分割线颜色
                 }
-                
-                VerticalBox {
-                    ScrollView {
-                        height: 95%;
-                        for data in [
-                            { text: "书签1", color: #fff},
-                            { text: "书签2", color: #fff},
-                            { text: "书签3", color: #fff},
-                        ]:Text {
-                            x: 0;
-                            text: data.text;
-                            horizontal-alignment: left;
-                            vertical-alignment: center;
-                        }
-                    }
-                    Rectangle {
-                        height: 10px;
-                        width: 100%;
-                        Text {
-                            text: "h";
-                        }
-                    }
-                }
+                StandardListView {
+                vertical-scrollbar-policy: ScrollBarPolicy.as-needed;
+                model: [
+                    {text: @tr("Lorem")}, {text: @tr("ipsum")},{text: @tr("dolor")},{text: @tr("sit")},{text: @tr("amet")},{text: @tr("consetetur")},
+                    {text: @tr("Lorem")}, {text: @tr("ipsum")},{text: @tr("dolor")},{text: @tr("sit")},{text: @tr("amet")},{text: @tr("consetetur")},
+                    {text: @tr("Lorem")}, {text: @tr("ipsum")},{text: @tr("dolor")},{text: @tr("sit")},{text: @tr("amet")},{text: @tr("consetetur")},
+                    {text: @tr("Lorem")}, {text: @tr("ipsum")},{text: @tr("dolor")},{text: @tr("sit")},{text: @tr("amet")},{text: @tr("consetetur")},
+                    {text: @tr("Lorem")}, {text: @tr("ipsum")},{text: @tr("dolor")},{text: @tr("sit")},{text: @tr("amet")},{text: @tr("consetetur")},
+                    {text: @tr("Lorem")}, {text: @tr("ipsum")},{text: @tr("dolor")},{text: @tr("sit")},{text: @tr("amet")},{text: @tr("consetetur")},
+                    {text: @tr("Lorem")}, {text: @tr("ipsum")},{text: @tr("dolor")},{text: @tr("sit")},{text: @tr("amet")},{text: @tr("consetetur")},
+                ];
             }
         }
+    }
 
         GroupBox {
         }
